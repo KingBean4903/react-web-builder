@@ -8,6 +8,10 @@ const createJestConfig = nextJest({
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
+  transform: { '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],},
+  transformIgnorePatterns: [
+    '/node_modules/(?!(uuid)/)',
+  ]
 }
 
 export default createJestConfig(config)

@@ -39,12 +39,12 @@ function ImageComponent({ role, src, alt }) {
 	
 }
 
-function SectionComponent({ children } : { children?: any[] }) {
+function SectionComponent({ children, role} : { children?: any[] }) {
 
 	const items = children.map(item => {
 				const Block = sections[item.tag];
 				return <Block key={crypto.randomUUID()} {...item} />
 	});
 
-	return (<section>{items}</section>)	
+	return (<section role={role}>{items}</section>)	
 }

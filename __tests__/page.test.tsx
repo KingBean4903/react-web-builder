@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import Home from '../app/page';
 
 describe('Page', () => {
@@ -17,6 +17,11 @@ describe('Page', () => {
 	
 			expect(screen.getByText('Elements')).toBeInTheDocument()
 			expect(screen.getByRole('banner')).toBeInTheDocument()
+
+			fireEvent.click(screen.getByText(/Section/i));
+
+			const sections = screen.queryAllByRole('section');
+			expect(sections.length).toBe(2);
 			
 	})
 

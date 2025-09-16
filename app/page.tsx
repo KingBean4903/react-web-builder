@@ -1,18 +1,23 @@
 /**
  * @jest-environment jsdom
  */
+'use client'
 import Image from "next/image";
+import { v4 as uuidv4 } from 'uuid';
+import { useState } from 'react';
 import styles from "./page.module.css";
 import Sidenav from "@/components/sidenav/sidenav"
 import WebsiteComponent from "@/components/WebsiteComponent/WebsiteComponent"
 
 const pageStructure : any= {
-  styles: { },
+  styles: {
+  },
   children: [
    { 
      tag: "section",
+     role: "section",
      children: [
-       { src: "https://www.pexels.com/photo/photo-of-neon-signage-1820770/" , 
+       { src: "banner.jpg" , 
          alt: "banner", tag: "image", className: "banner",  role: "banner", id: "banner"  },
        { className: "title", tag: "title", text: "Hello Website", role: "heading" },
       ],
@@ -25,17 +30,33 @@ const pageStructure : any= {
 
 
 export default function Home() {
+  
+  const [state, setState] = useState(pageStructure);
+
+  function handleAddSection(id) {
+      setState({
+        ...state,
+        children: [
+          ...state.children,
+          { id: id, role: "section", tag: "section", 
+            children: [  
+              { className: "title", tag: "title", text: "Hello Website", role: "heading" },
+            ] }
+        ]
+      })
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Dashboard />
+        <Dashboard handleAddSection={handleAddSection} data={state}/>
       </main>
     </div>
   );
 }
 
 
-function Dashboard() {
+function Dashboard({ handleAddSection, data } : { data: any, handleAddSection: (string) => void }) {
 
   return(
     <>
@@ -46,11 +67,11 @@ function Dashboard() {
             </div>
             
             <div role="sidenav" className={styles.sidenav}>
-                  <Sidenav />
+                  <Sidenav handleAddSection={handleAddSection} />
             </div>
        
             <div className={styles.content}>
-              <WebsiteComponent components={pageStructure.children} />
+              <WebsiteComponent components={data.children} />
             </div>
 
         </div>
