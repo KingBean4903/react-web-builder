@@ -1,10 +1,9 @@
 
-export default function Sidenav({ handleAddSection } : { handleAddSection : (string) => void}) {
+export default function Sidenav() {
 
   function handleCreateSection() {
     const uniqueId = crypto.randomUUID();
 
-    handleAddSection(uniqueId);
   }
 
   return(

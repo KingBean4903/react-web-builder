@@ -33,17 +33,23 @@ export default function Home() {
   
   const [state, setState] = useState(pageStructure);
 
-  function handleAddSection(id) {
-      setState({
-        ...state,
+  function handleAddSection(insertAtID, newSecId) {
+      
+    const idx = state.children.indexOf(state.children.filter(one => insertAtID == one.id )[0]);
+
+    setState({
+        ...state, 
         children: [
-          ...state.children,
-          { id: id, role: "section", tag: "section", 
+        ...state.children.slice(0, idx),
+          { id: newSecId, role: "section", tag: "section", 
             children: [  
               { className: "title", tag: "title", text: "Hello Website", role: "heading" },
-            ] }
+            ] },
+        ...state.children.slice(idx),
         ]
-      })
+    })
+
+
   }
 
   return (
@@ -67,11 +73,11 @@ function Dashboard({ handleAddSection, data } : { data: any, handleAddSection: (
             </div>
             
             <div role="sidenav" className={styles.sidenav}>
-                  <Sidenav handleAddSection={handleAddSection} />
+              <Sidenav /> 
             </div>
        
             <div className={styles.content}>
-              <WebsiteComponent components={data.children} />
+              <WebsiteComponent components={data.children} handleAddSection={handleAddSection} />
             </div>
 
         </div>

@@ -18,10 +18,11 @@ describe('Page', () => {
 			expect(screen.getByText('Elements')).toBeInTheDocument()
 			expect(screen.getByRole('banner')).toBeInTheDocument()
 
-			fireEvent.click(screen.getByText(/Section/i));
+			fireEvent.click(screen.getByText(/Add Section/i));
 
 			const sections = screen.queryAllByRole('section');
 			expect(sections.length).toBe(2);
+
 			
 	})
 

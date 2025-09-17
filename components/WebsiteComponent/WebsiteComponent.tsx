@@ -1,4 +1,5 @@
 
+import styles from "./WebsiteComponent.module.css";
 
 const sections = {
 	section: SectionComponent,
@@ -6,11 +7,13 @@ const sections = {
 	image: ImageComponent,
 };
 
-export default function WebsiteComponent({ components } : { any }) {
+export default function WebsiteComponent({ components, handleAddSection } : 
+																				 { children: any, handleAddSection: (secId, newId) => void }) {
 
 	const items = components.map(item => {
 				const Block = sections[item.tag]
-				return <Block key={crypto.randomUUID()} {...item} />
+				item = {...item, handleAddSection};
+				return <Block key={crypto.randomUUID()} {...item } />
 	})
 
 	return <>{items}</>
@@ -39,12 +42,30 @@ function ImageComponent({ role, src, alt }) {
 	
 }
 
-function SectionComponent({ children, role} : { children?: any[] }) {
+function SectionComponent({ handleAddSection, children, role, id} :
+													{ role: string, handleAddSection: (secId, newId) => void, id: string, children?: any[] }) {
+
+	const sctnButton : React.CSSProperties = { 
+			display: 'flex',
+			position: 'absolute',
+			bottom: 0,
+			left: '45%',
+	};
 
 	const items = children.map(item => {
 				const Block = sections[item.tag];
 				return <Block key={crypto.randomUUID()} {...item} />
 	});
 
-	return (<section role={role}>{items}</section>)	
+	function handleAddSectionBelow() {
+		
+		handleAddSection(id, crypto.randomUUID());
+	}
+
+	return (
+		<section onMouseEnter={handleAddSectionBelow} role={role}>
+		 {items}
+			<button  role="button" type="button" onClick={handleAddSectionBelow}>Add Section</button>
+		</section>
+	)	
 }
