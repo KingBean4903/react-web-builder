@@ -7,7 +7,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import styles from "./page.module.css";
 import Sidenav from "@/components/sidenav/sidenav"
+import TopNav from "@/components/topnav/topnav"
 import WebsiteComponent from "@/components/WebsiteComponent/WebsiteComponent"
+import { useReducer } from 'react'; 
+import { ModalsState, modalsReducer,modalsState  } from '@/lib/utils.ts'
+import ElementsModal from '@/components/modals/ElementsModal';
 
 const pageStructure : any= {
   styles: {
@@ -17,12 +21,13 @@ const pageStructure : any= {
      tag: "section",
      role: "section",
      children: [
-       { src: "banner.jpg" , 
+       { src: "banner.jpg" , style: { width: "100px", height: "100px"},
          alt: "banner", tag: "image", className: "banner",  role: "banner", id: "banner"  },
-       { className: "title", tag: "title", text: "Hello Website", role: "heading" },
+         { style: { color: "green" }, className: "title", tag: "title", text: "Hello Website", role: "heading" },
       ],
       className: "section",
       id: "section",
+      style: { background: "#E0E0E0",  padding: "1em", width: "500px", height: "300px"},
    }
 
   ],
@@ -35,7 +40,7 @@ export default function Home() {
 
   function handleAddSection(insertAtID, newSecId) {
       
-    const idx = state.children.indexOf(state.children.filter(one => insertAtID == one.id )[0]);
+    let idx = state.children.indexOf(state.children.filter(one => insertAtID == one.id )[0]);
 
     setState({
         ...state, 
@@ -45,12 +50,11 @@ export default function Home() {
             children: [  
               { className: "title", tag: "title", text: "Hello Website", role: "heading" },
             ] },
-        ...state.children.slice(idx),
+          ...state.children.slice(idx),
         ]
-    })
-
-
+    });
   }
+
 
   return (
     <div className={styles.page}>
@@ -64,20 +68,23 @@ export default function Home() {
 
 function Dashboard({ handleAddSection, data } : { data: any, handleAddSection: (string) => void }) {
 
+  const [modals, dispatch] = useReducer(modalsReducer, modalsState);
   return(
     <>
+
+        { modals.ElementsModal ? (<ElementsModal />) : '' }
         <div className={styles.dashboard}>
 
             <div className={styles.topbar}>
-              <h1>Topbar</h1>
+              <TopNav />
             </div>
             
             <div role="sidenav" className={styles.sidenav}>
-              <Sidenav /> 
+
+              <Sidenav modals={modals} dispatch={dispatch}  /> 
             </div>
        
             <div className={styles.content}>
-              <WebsiteComponent components={data.children} handleAddSection={handleAddSection} />
             </div>
 
         </div>

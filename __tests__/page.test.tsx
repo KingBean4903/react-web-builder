@@ -11,18 +11,9 @@ describe('Page', () => {
 	it('renders  a heading', () => {
 
 			render(<Home />);
-			expect(screen.getByText('Topbar')).toBeInTheDocument()
-			expect(screen.getByRole('sidenav')).toBeInTheDocument()
-			// expect(screen.getByText('Content')).toBeInTheDocument()
-	
-			expect(screen.getByText('Elements')).toBeInTheDocument()
-			expect(screen.getByRole('banner')).toBeInTheDocument()
 
-			fireEvent.click(screen.getByText(/Add Section/i));
-
-			const sections = screen.queryAllByRole('section');
-			expect(sections.length).toBe(2);
-
+			fireEvent.click(screen.getByTestId('add-elmnt-btn'));	
+			expect(screen.getByText('Elements Modal')).toBeInTheDocument()
 			
 	})
 

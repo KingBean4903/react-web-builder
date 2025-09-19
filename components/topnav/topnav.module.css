@@ -1,0 +1,42 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	width: 100vw;
+
+	background: #fff;
+	max-height: 10vh;
+}
+
+.topNav {
+	height: 4vh;
+}
+.btmNav {
+	margin-left: 1em;
+	display: flex;
+	height: 4vh;
+	align-items: flex-end;
+}
+
+.btmNav h4 {
+	height: 4vh;
+	display: flex;
+	align-items: center;
+}
+
+.responsive {
+	height: 4vh;
+
+	padding-left: .25em;
+	border-left: 1px solid #e0e0e0;
+	column-gap: .25em;
+	display: flex;
+	align-items: flex-end;
+}
+
+.btmNav select {
+	padding: .85em .85em;
+	margin-right: 1em;
+	width: 6vw;
+	border: none;
+	background: #fff;
+}

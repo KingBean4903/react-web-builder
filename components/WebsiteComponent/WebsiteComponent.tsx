@@ -15,35 +15,34 @@ export default function WebsiteComponent({ components, handleAddSection } :
 				item = {...item, handleAddSection};
 				return <Block key={crypto.randomUUID()} {...item } />
 	})
-
 	return <>{items}</>
-	
-
 }
 
 
-function TitleComponent({ role, text }) {
+function TitleComponent({ style, role, text }) {
 	
 	return(
 			<> 
-				<h1 role={role}>{text}</h1>
+				<h1 style={style} role={role}>{text}</h1>
 			</>
 	)
 	
 }
 
-function ImageComponent({ role, src, alt }) {
+function ImageComponent({ role, style, src, alt }) {
 	
 	return(
 			<> 
-				<img role={role} src={src} alt={alt} />
+				<img role={role} src={src} alt={alt} style={style} />
 			</>
 	)
 	
 }
 
-function SectionComponent({ handleAddSection, children, role, id} :
-													{ role: string, handleAddSection: (secId, newId) => void, id: string, children?: any[] }) {
+function SectionComponent({ handleAddSection, children, style, role, id} :
+													{ role: string, handleAddSection: (secId, newId) => void, 
+														style: any,
+														id: string, children?: any[] }) {
 
 	const sctnButton : React.CSSProperties = { 
 			display: 'flex',
@@ -58,12 +57,13 @@ function SectionComponent({ handleAddSection, children, role, id} :
 	});
 
 	function handleAddSectionBelow() {
-		
 		handleAddSection(id, crypto.randomUUID());
 	}
 
+	function handleMouseEnter() {}
+
 	return (
-		<section onMouseEnter={handleAddSectionBelow} role={role}>
+		<section onMouseEnter={handleMouseEnter} style={style} role={role}>
 		 {items}
 			<button  role="button" type="button" onClick={handleAddSectionBelow}>Add Section</button>
 		</section>
