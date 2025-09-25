@@ -12,31 +12,12 @@ import WebsiteComponent from "@/components/WebsiteComponent/WebsiteComponent"
 import { useReducer } from 'react'; 
 import { ModalsState, modalsReducer,modalsState  } from '@/lib/utils.ts'
 import ElementsModal from '@/components/modals/ElementsModal';
-
-const pageStructure : any= {
-  styles: {
-  },
-  children: [
-   { 
-     tag: "section",
-     role: "section",
-     children: [
-       { src: "banner.jpg" , style: { width: "100px", height: "100px"},
-         alt: "banner", tag: "image", className: "banner",  role: "banner", id: "banner"  },
-         { style: { color: "green" }, className: "title", tag: "title", text: "Hello Website", role: "heading" },
-      ],
-      className: "section",
-      id: "section",
-      style: { background: "#E0E0E0",  padding: "1em", width: "500px", height: "300px"},
-   }
-
-  ],
-};
+import { pages } from '@/lib/lib1'
 
 
 export default function Home() {
   
-  const [state, setState] = useState(pageStructure);
+  const [state, setState] = useState(pages);
 
   function handleAddSection(insertAtID, newSecId) {
       
@@ -85,6 +66,7 @@ function Dashboard({ handleAddSection, data } : { data: any, handleAddSection: (
             </div>
        
             <div className={styles.content}>
+              <WebsiteComponent components={data} handleAddSection={handleAddSection } />
             </div>
 
         </div>

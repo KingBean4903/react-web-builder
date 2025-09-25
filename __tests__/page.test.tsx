@@ -14,6 +14,11 @@ describe('Page', () => {
 
 			fireEvent.click(screen.getByTestId('add-elmnt-btn'));	
 			expect(screen.getByText('Elements Modal')).toBeInTheDocument()
+
+			const logoImg = screen.getByAltText(/Logo/i)
+			expect(logoImg).toBeInTheDocument();
+
+			expect(screen.getByText(/Lifestyle/)).toBeInTheDocument();
 			
 	})
 

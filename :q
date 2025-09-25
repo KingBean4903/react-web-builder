@@ -20,7 +20,7 @@ const sections = {
 export default function WebsiteComponent({ components, handleAddSection } : 
 																				 { children: any, handleAddSection: (secId, newId) => void }) {
 
-	const items = components[0].sections.map(item => {
+	const items = components.map(item => {
 				const Block = sections[item.tag]
 				item = {...item, handleAddSection};
 				return <Block key={crypto.randomUUID()} {...item } />
