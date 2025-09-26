@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 const sections = {
 
@@ -71,26 +71,19 @@ function MediaImg({ props }){
 
 function HorizontalMenu({ props,style, isFocussed}) {
 		
-	const cnvRef = useRef(null);
 	const divRef = useRef(null);
+	const boxRef = useRef(null);
+
+	const handleRef = useRef(null);
 
 	const links = props.links.map(one => <li><Atag text={one} url="#" /></li> )
 	
-	useEffect(() => {
-
-				const ctx = cnvRef.current.getContext("2d");	
-				if (isFocussed) {	
-					handleClick(ctx);
-				} else {
-					ctx.ClearRect()	
-				}
-	}, [isFocussed])
 
 
 	function handleClick(ctx) { 
 			//const ctx = cnvRef.current.getContext("2d");
 			let rect = divRef.current.getBoundingClientRect();
-			let cRect = cnvRef.current.getBoundingClientRect();
+			let cRect = boxRef.current.getBoundingClientRect();
 
 			let [width, height] = computeSize(divRef.current);
 
@@ -126,36 +119,17 @@ function HorizontalMenu({ props,style, isFocussed}) {
 	}
 
 
+
 	return(
 		<div style={{
 					position:"relative",
+					border: "4px solid yellow"
 				 }}
-
 				ref={divRef}> 
 		
-
-			<div style={{
-						position: "absolute",
-						zIndex: 500,
-						top: 0,
-						left: 0,
-						width: "100%", 
-						height: "100%",
-				}}>
-				
-				<canvas style={{
-							width: "100%", 
-							border: "1px solid pink",
-							height: "100%",
-							zIndex: 999,
-					 }}
-					 ref={cnvRef}>
-					</canvas>
-			
-			</div>
+			<BoundingBox boxRef={boxRef} handleRef={handleRef} />
 
 			
-
 			<div style={{
 						width: "100%", 
 					  padding: ".5em .5em",
@@ -171,6 +145,152 @@ function HorizontalMenu({ props,style, isFocussed}) {
 		</div>
 	)
 }
+
+function BoundingBox({ boxRef, handleRef }) {
+	
+	//
+	const [rect, setRect] = useState({ xr: 0, yr: 0, width: 200, height: 150 });
+
+	const [pos, setPos] = useState({
+					x: 0,
+					y: 0,
+		});
+
+		// Bounding box refs
+		const liveRectRef = useRef({ ...rect });
+		const startRectRef = useRef({ ...rect });
+
+
+		// Refs for dragging
+		const draggingRef = useRef(false);
+		const startMouseRef = useRef({ x: 0, y: 0 });
+		const startPosRef = useRef({ x: 0, y: 0 });
+	  const livePosRef = useRef({ x: pos.x, y: pos.y })
+
+		useEffect(() => {
+			let frameId: number;
+			
+			const animate = () => {
+					if (handleRef.current && boxRef.current) {
+							const { x,  y } = livePosRef.current;
+							const { xr, yr, width, height} = liveRectRef.current;
+							boxRef.current.style.transform = `translate(${x})`;
+							boxRef.current.style.width = `${width}px`;
+							handleRef.current.style.transform = `translate(${x}px)`;
+					}
+					frameId = requestAnimationFrame(animate);
+			};
+
+			frameId = requestAnimationFrame(animate);
+			return () => cancelAnimationFrame(frameId);
+		}, []);
+
+		const onMouseDown = (e: React.MouseEvent) => {
+
+				draggingRef.current = true;
+				startMouseRef.current = { x: e.clientX, y: e.clientY };
+				startPosRef.current = { ...livePosRef.current };
+
+				startRectRef.current = { ...liveRectRef.current };
+
+				document.addEventListener("mousemove", onMouseMove);
+				document.addEventListener("mouseup", onMouseUp);
+		}
+		
+		const onMouseMove = (e: MouseEvent) => {
+			if (!draggingRef.current) return;
+
+			const dx = e.clientX - startMouseRef.current.x;
+			const dy = e.clientY - startMouseRef.current.y;
+			const { xr, yr, width, height } = startRectRef.current;
+			let newRect = { xr, yr, width, height};
+
+			newRect.width = Math.max(50, width + dx);
+			liveRectRef.current = newRect;
+
+
+			livePosRef.current = {
+					x: startPosRef.current.x + dx,
+					y: startPosRef.current.y + dy,
+			};
+		
+		};
+
+
+		const onMouseUp = () => {
+				draggingRef.current = false;
+
+				setPos({ ...livePosRef.current });
+
+				document.removeEventListener("mousemove", onMouseMove);
+				document.removeEventListener("mouseup", onMouseUp);
+		}
+
+
+
+	return(
+			<>
+
+			<div style={{
+						position: "absolute",
+						zIndex: 500,
+						left: 0,
+						top: 0,
+						width: rect.width, 
+						tranform: `translate(${rect.x}px)`,
+						border: "1px solid green",
+						height: rect.height,
+				}} ref={boxRef}>
+	
+				<div ref={handleRef} 
+							  onMouseDown={onMouseDown} 
+								style={{
+								border: "1px solid green",
+								width: "14px",
+								zIndex: 999,
+								height: "14px",
+								borderRadius: "50%",
+								background: "#E0E0E0",
+								position:  "absolute",
+								top: "35%",
+								left: "-7px",
+								transform: `translate(${pos.x}px)`
+					}}>
+				</div>
+
+			</div>
+			</>
+	)
+
+}
+
+function RightHandle({ handleRef }) {
+
+
+
+
+
+
+	return(
+				<div ref={handleRef} 
+							  onMouseDown={onMouseDown} 
+								style={{
+								border: "1px solid green",
+								width: "14px",
+								zIndex: 999,
+								height: "14px",
+								borderRadius: "50%",
+								background: "#E0E0E0",
+								position:  "absolute",
+								top: "35%",
+								left: "-7px",
+								transform: `translate(${pos.x}px)`
+					}}>
+				</div>
+	)
+
+}
+
 
 function Atag({ text, url}) {
 		return(
