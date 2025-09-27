@@ -75,7 +75,7 @@ function HorizontalMenu({ props,style, isFocussed}) {
 	const boxRef = useRef(null);
 	const handleRef = useRef(null);
 
-	const [containerSize, setContainerSize] = useState({ width: 700, height: 90});
+	const [containerSize, setContainerSize] = useState({ width: 500, height: 90});
 
 	const [size, setSize] = useState({ width: 0, height: 0 });
 
@@ -116,7 +116,11 @@ function HorizontalMenu({ props,style, isFocussed}) {
 
 
 	return(
+		<div style={{ width: '700px', display: 'flex', alignItems: 'center'
+									, justifyContent: 'end', height: '200px'
+			}}> 
 		<div style={{
+			  
 					position:"relative",
 					border: "4px solid yellow",
 					width: `${containerSize.width}px`,
@@ -137,13 +141,20 @@ function HorizontalMenu({ props,style, isFocussed}) {
 			</div>
 
 		</div>
+		</div>
 	)
 }
 
 function BoundingBox({ boxRef, handleRef, dimensions }) {
 	
 	//
-	const [rect, setRect] = useState({ xr: 0, yr: 0, width: dimensions.width, height: dimensions.height });
+	const [rect, setRect] = useState({
+		left: 0,
+		top: 0,
+						xr: 0, 
+						yr: 0, 
+						width: dimensions.width, 
+						height: dimensions.height });
 
 	const [pos, setPos] = useState({
 					x: 0,
@@ -169,8 +180,9 @@ function BoundingBox({ boxRef, handleRef, dimensions }) {
 							const { x,  y } = livePosRef.current;
 							const { xr, yr, width, height} = liveRectRef.current;
 							boxRef.current.style.transform = `translate(${x})`;
+							//		Lock edges 
 							boxRef.current.style.width = `${width}px`;
-							handleRef.current.style.transform = `translate(${x}px)`;
+							handleRef.current.style.transform = `translate(${x})`;
 					}
 					frameId = requestAnimationFrame(animate);
 			};
@@ -199,7 +211,7 @@ function BoundingBox({ boxRef, handleRef, dimensions }) {
 			const { xr, yr, width, height } = startRectRef.current;
 			let newRect = { xr, yr, width, height};
 
-			newRect.width = Math.max(50, width + dx);
+			newRect.width = Math.max(50, width - dx);
 			liveRectRef.current = newRect;
 
 
@@ -233,7 +245,7 @@ function BoundingBox({ boxRef, handleRef, dimensions }) {
 						left: 0,
 						top: 0,
 						width: `${rect.width}px`, 
-						tranform: `translate(${rect.x}px)`,
+						tranform: `translate(${pos.x}px)`,
 						border: "1px solid green",
 						height: `${rect.height}px`,
 				}} ref={boxRef}>
@@ -250,7 +262,7 @@ function BoundingBox({ boxRef, handleRef, dimensions }) {
 								position:  "absolute",
 								top: "35%",
 								left: "-7px",
-								transform: `translate(${pos.x}px)`
+								transform: `translate(${pos.x})`
 					}}>
 				</div>
 
