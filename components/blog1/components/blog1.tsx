@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRef, useEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useEffect, useState } from 'react';
 
 const sections = {
 
@@ -73,83 +73,77 @@ function HorizontalMenu({ props,style, isFocussed}) {
 		
 	const divRef = useRef(null);
 	const boxRef = useRef(null);
-
 	const handleRef = useRef(null);
 
-	const links = props.links.map(one => <li><Atag text={one} url="#" /></li> )
+	const [containerSize, setContainerSize] = useState({ width: 700, height: 90});
+
+	const [size, setSize] = useState({ width: 0, height: 0 });
+
+	const links = props.links.map(one => <li key={crypto.randomUUID()}><Atag text={one} url="#" /></li> )
 	
+  useEffect(() => {
+
+		/*if (divRef.current) {
+				const { clientWidth, clientHeight } = divRef.current;
+				setSize({ width: clientWidth, height: clientHeight });
+				} */
+
+		if (!boxRef.current) return;
+
+		const observer = new ResizeObserver((entries) => {
+			requestAnimationFrame(() => {
+							for (let entry of entries) {
 
 
-	function handleClick(ctx) { 
-			//const ctx = cnvRef.current.getContext("2d");
-			let rect = divRef.current.getBoundingClientRect();
-			let cRect = boxRef.current.getBoundingClientRect();
+								const { width, height } = entry.contentRect;
+								const left = boxRef.current?.offsetLeft ?? 0;
+								const top = boxRef.current?.offsetTop ?? 0;
 
-			let [width, height] = computeSize(divRef.current);
+								setContainerSize({
+										width: left + width,
+										height: top + height,
+								})
+							}
+			});
 
-			console.log(`Rect Size ${rect.width} ${rect.height}`)
-			console.log(`Width ${width} ${height}`)
+		});
 
-			let totalWidth = width + rect.width;
-			let totalHeight = height + rect.height;
+		observer.observe(boxRef.current);
 
-			console.log(`Totals Width ${totalWidth} ${totalHeight}`)
-	}
+		return () => observer.disconnect();
 
-	function computeSize(element) {
-			
-			const cSize = window.getComputedStyle(element);
-			const marginTop = parseFloat(cSize.marginTop);
-			const marginRight = parseFloat(cSize.marginRight);
-			const marginBottom = parseFloat(cSize.marginBottom);
-			
-			console.log(`Margin bottom ${marginBottom}`);
-			const marginLeft= parseFloat(cSize.marginLeft);
-
-			const paddingBottom = parseFloat(cSize.paddingBottom);
-			console.log(`Padding bottom ${paddingBottom}`);
-			const paddingTop = parseFloat(cSize.paddingTop);
-			const paddingLeft = parseFloat(cSize.paddingLeft);
-			const paddingRight= parseFloat(cSize.paddingRight);
-
-			const totalWidth = paddingLeft + paddingRight + marginRight + marginLeft;
-			const totalHeight = paddingTop + paddingBottom + marginBottom + marginTop;
-
-			return [totalWidth, totalHeight];
-	}
-
+	}, []);
 
 
 	return(
 		<div style={{
 					position:"relative",
-					border: "4px solid yellow"
+					border: "4px solid yellow",
+					width: `${containerSize.width}px`,
+					height: `${containerSize.height}px`,
 				 }}
 				ref={divRef}> 
-		
-			<BoundingBox boxRef={boxRef} handleRef={handleRef} />
+	    	
+			   <BoundingBox boxRef={boxRef} dimensions={containerSize} handleRef={handleRef}  /> 
 
-			
 			<div style={{
 						width: "100%", 
 					  padding: ".5em .5em",
 						height: "100%",
 				}}>
-
 					<ul style={style}>
 						{links}
-					</ul>
-			
+					</ul>			
 			</div>
 
 		</div>
 	)
 }
 
-function BoundingBox({ boxRef, handleRef }) {
+function BoundingBox({ boxRef, handleRef, dimensions }) {
 	
 	//
-	const [rect, setRect] = useState({ xr: 0, yr: 0, width: 200, height: 150 });
+	const [rect, setRect] = useState({ xr: 0, yr: 0, width: dimensions.width, height: dimensions.height });
 
 	const [pos, setPos] = useState({
 					x: 0,
@@ -222,6 +216,8 @@ function BoundingBox({ boxRef, handleRef }) {
 
 				setPos({ ...livePosRef.current });
 
+				console.log(handleRef);
+
 				document.removeEventListener("mousemove", onMouseMove);
 				document.removeEventListener("mouseup", onMouseUp);
 		}
@@ -236,10 +232,10 @@ function BoundingBox({ boxRef, handleRef }) {
 						zIndex: 500,
 						left: 0,
 						top: 0,
-						width: rect.width, 
+						width: `${rect.width}px`, 
 						tranform: `translate(${rect.x}px)`,
 						border: "1px solid green",
-						height: rect.height,
+						height: `${rect.height}px`,
 				}} ref={boxRef}>
 	
 				<div ref={handleRef} 
@@ -265,11 +261,6 @@ function BoundingBox({ boxRef, handleRef }) {
 }
 
 function RightHandle({ handleRef }) {
-
-
-
-
-
 
 	return(
 				<div ref={handleRef} 
